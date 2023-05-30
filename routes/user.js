@@ -49,45 +49,45 @@ router.post("/upload",function(req,res,next){
   
 })*/
 
-var Storage = multer.diskStorage({
-  destination: "./public/uploads/" ,
-  filename:(req,file,cb)=>{
-    cb(null,file.fieldname+"_"+Date.now()+path.extname(file.originalname));
-  }
+// var Storage = multer.diskStorage({
+//   destination: "./public/uploads/" ,
+//   filename:(req,file,cb)=>{
+//     cb(null,file.fieldname+"_"+Date.now()+path.extname(file.originalname));
+//   }
    
 
-});
+// });
 
-var upload = multer({
-  storage:Storage
-}).single('Rphoto')
+// var upload = multer({
+//   storage:Storage
+// }).single('Rphoto')
 
-router.post('/upload', upload,function (req, res, next) {
-  var success = req.file.filename+"upload"
-  // req.file is the `avatar` file
-  // req.body will hold the text fields, if there were any
-  var reportDetails = new repModel({
-    centreId: req.body.centreID,
-    description: req.body.description,
-    Rphoto: req.file.filename,
-    title: req.body.title,
-    date: req.body.date,
-    reportId: req.body.reportId
-  });
-  console.log(reportDetails)
+// router.post('/upload', upload,function (req, res, next) {
+//   var success = req.file.filename+"upload"
+//   // req.file is the `avatar` file
+//   // req.body will hold the text fields, if there were any
+//   var reportDetails = new repModel({
+//     centreId: req.body.centreID,
+//     description: req.body.description,
+//     Rphoto: req.file.filename,
+//     title: req.body.title,
+//     date: req.body.date,
+//     reportId: req.body.reportId
+//   });
+//   console.log(reportDetails)
   
 
 
-  reportDetails.save()
-  .then(() => {
-    res.send("Form submitted successfully");
-  })
-  .catch(err => {
-    throw err;
-  });
+//   reportDetails.save()
+//   .then(() => {
+//     res.send("Form submitted successfully");
+//   })
+//   .catch(err => {
+//     throw err;
+//   });
 
   
-})
+//})
 
 
 /*
@@ -114,5 +114,42 @@ router.post('/upload', upload,function (req, res, next) {
   });
 
   */
+
+
+
+  var Storage = multer.diskStorage({
+    destination: "./public/uploads/",
+    filename: (req, file, cb) => {
+      cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname));
+    }
+  });
+  
+  var upload = multer({
+    storage: Storage
+  }).array("Rphoto", 3);
+  
+  router.post('/upload', upload, function (req, res, next) {
+    var success = req.files.map(file => file.filename + " upload");
+  
+    var reportDetails = new repModel({
+      centreId: req.body.centreID,
+      description: req.body.description,
+      Rphoto: req.files.map(file => file.filename),
+      title: req.body.title,
+      date: req.body.date,
+      reportId: req.body.reportId
+    });
+  
+    console.log(reportDetails);
+  
+    reportDetails.save()
+      .then(() => {
+        res.send("Form submitted successfully");
+      })
+      .catch(err => {
+        throw err;
+      });
+  });
+  
 
 module.exports = router;

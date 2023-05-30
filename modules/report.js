@@ -10,7 +10,7 @@ var conn = mongoose.connection;
 var reportSchema = new mongoose.Schema({
     centreId :Number,
     description :String,
-    Rphoto:String,
+    Rphoto: [String],
     title:String,
     date: { type: Date, default: Date.now },
     reportId: { type: Number, required: true, unique: true }

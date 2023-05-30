@@ -2,7 +2,6 @@
 <html>
   <head>
     <title>Reports</title>
-    <link rel="stylesheet" href="/stylesheets/style.css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
@@ -10,6 +9,29 @@
       integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
       crossorigin="anonymous"
     />
+    <style>
+      .enlarged-image-container {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 999;
+      }
+      
+      .enlarged-image-container.show {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      .enlarged-image {
+        max-width: 90%;
+        max-height: 90%;
+      }
+    </style>
   </head>
   <body>
     <section>
@@ -31,7 +53,11 @@
                 <tr>
                   <td><%= row.centreId %></td>
                   <td><%= row.description %></td>
-                  <td><img style="height: 50px; width: 50px;" src="./uploads/<%= row.Rphoto %>" alt="Product Image"></td>
+                  <td>
+                    <% row.Rphoto.forEach(function(photo) { %>
+                      <img class="thumbnail" style="height: 50px; width: 50px; margin-bottom:20px;cursor: pointer;" src="./uploads/<%= photo %>" alt="Product Image" data-src="./uploads/<%= photo %>">
+                    <% }); %>
+                  </td>
                   <td><%= row.title %></td>
                   <td><%= row.reportId %></td>
                   <td><%= row.date %></td>
@@ -39,9 +65,27 @@
               <% }); %>
             <% } %>
           </tbody>
-          
         </table>
       </div>
     </section>
+
+    <div id="enlarged-image-container" class="enlarged-image-container">
+      <img id="enlarged-image" src="" alt="Enlarged Image">
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $(".thumbnail").on("click", function() {
+          var imageUrl = $(this).data("src");
+          $("#enlarged-image").attr("src", imageUrl);
+          $("#enlarged-image-container").addClass("show");
+        });
+        
+        $("#enlarged-image-container").on("click", function() {
+          $("#enlarged-image-container").removeClass("show");
+        });
+      });
+    </script>
   </body>
 </html>
